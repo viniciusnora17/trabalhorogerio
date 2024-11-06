@@ -21,17 +21,24 @@ frmPesquisa.onsubmit = (ev) =>{
 }
 
 const carregaLista = (json) => {
-    const lista = document.querySelector("div.lista")
+    const lista = document.querySelector("div.lista");
+    
     lista.innerHTML = ""
+
+    if(!json.Response == 'false'){
+        alert("Nenhum filme foi encontrado ")
+        return
+    }
+
     json.results.forEach(element =>{
-        console.log(element)
+        console.log(element.title)
 
         let item = document.createElement("div")
         item.classList.add("filmes")
 
-        item.innerHTML = `<img src="${element.poster_path}" /> <h2>${element.title}</h2>` 
+        item.innerHTML = `<img src="https://image.tmdb.org/t/p/original/${element.poster_path}"/> <h2>${element.title}</h2>` 
 
-        lista.appendChild(filmes)
+        lista.appendChild(item)
     })
    
 }
@@ -41,30 +48,33 @@ async function pesquisaEmAlta() {
     const resposta = await fetch(em_alta);
     const dados = await resposta.json();
     exibirCarrossel(dados.results);
+    carregaLista(dados) 
+
 }
 
 function exibirCarrossel(filmes) {
     const carrosselContainer = document.querySelector('.carrossel');
     carrosselContainer.innerHTML = ''; 
     
-
+    
     filmes.forEach(filme => {
-     
+        
         const imagem = document.createElement('img');
         imagem.src = `https://image.tmdb.org/t/p/w500${filme.poster_path}`;
         imagem.alt = filme.title;
-
+        
         carrosselContainer.appendChild(imagem);
     });
-
-
+    
+    
     let index = 0;
     setInterval(() => {
         
         carrosselContainer.scrollLeft = index * carrosselContainer.clientWidth;
-        index = (index + 1) % filmes.length; // 
+        index = (index + 1) % filmes.length; 
     }, 3000); 
 }
+
 
 pesquisaEmAlta();
 
